@@ -23,15 +23,30 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Мы используем [набор данных](https://www.kaggle.com/datasets/mmmarchetti/game-of-thrones-dataset) с Kaggle. В узлах нашей сети — персонажи, в рёбрах — их совместные появления в главах по книгам 1-5. Таким образом, каждая книга формирует отдельный слой сети, что позволяет изучить её эволюцию во времени.
 
-### Исследовательский вопрос: Как меняется структура сети персонажей по книгам — появляются ли новые кластеры, и как изменяются центральные узлы с течением времени?
+### Исследовательский вопрос: 
+Как меняется структура сети персонажей по книгам — появляются ли новые кластеры, и как изменяются центральные узлы с течением времени?
 
-Для анализа мы планируем построить графы, вычислить метрики центральности (`degree`, `betweenness`, `closeness`), проанализировать кластерную структуру и визуализировать изменения сети во времени.
+Для анализа мы планируем построить *графы*, вычислить метрики *центральности* (`degree`, `betweenness`, `closeness`), *проанализировать кластерную структуру* и *визуализировать изменения сети* во времени.
 
-### Импорт данных
+
+### Выделим необходимые библиотеки
+
+```{r message = F}
+library(readr)
+library(visdat)
+library(igraph)
+library(tidyverse)
+library(forcats)
+library(tidyr)
+library(knitr)
+library(ggplot2)
+#update.packages(ask = FALSE, checkBuilt = TRUE)
+```
+
+
+### Импортируем данные
 
 ```{r}
-library(readr)
-
 book1 <- read_csv("book1.csv")
 book2 <- read_csv("book2.csv")
 book3 <- read_csv("book3.csv")
@@ -50,3 +65,292 @@ head(book1)
 | **Type** | `chr` | Тип связи; в данных — всегда *Undirected* (неориентированная связь между персонажами). |
 | **weight** | `num` | Вес ребра — насколько часто персонажи взаимодействуют или появляются вместе. |
 | **book** | `num` | Номер книги (1–5), к которой относится данная пара персонажей. |
+
+
+### Посмотрим на пропуски и повторяющиеся значения в данных
+
+```{r}
+colSums(is.na(book2))
+```
+
+Видим, что есть один пропуск во второй книге, добавим значение:
+
+```{r}
+book2[775, "book"] <- 2
+vis_miss(book2)
+```
+
+### Теперь построим графы:
+
+Мы будем строить графы для каждой книги по отдельности, потому что хотим проанализировать как меняется структура сети персонажей с течением времени.
+
+```{r}
+g1 <- graph_from_data_frame(book1[, c("Source", "Target")], directed = FALSE)
+g2 <- graph_from_data_frame(book2[, c("Source", "Target")], directed = FALSE)
+g3 <- graph_from_data_frame(book3[, c("Source", "Target")], directed = FALSE)
+g4 <- graph_from_data_frame(book4[, c("Source", "Target")], directed = FALSE)
+g5 <- graph_from_data_frame(book5[, c("Source", "Target")], directed = FALSE)
+```
+
+Присвоим веса к каждому графу:
+
+```{r}
+E(g1)$weight <- book1$weight
+E(g2)$weight <- book2$weight
+E(g3)$weight <- book3$weight
+E(g4)$weight <- book4$weight
+E(g5)$weight <- book5$weight
+```
+
+
+### Описательная статистика
+
+```{r}
+# Узлы
+vcount(g1)
+
+# Рёбра
+ecount(g1)
+
+# Диады можно посчитать вручную. Направленный граф:
+vcount(g1) * (vcount(g1) - 1) / 2
+```
+
+
+## Центральность
+
+### Книга 1
+
+### Уровень/мера центральности (Degree centrality)
+
+```{r}
+deg1 <- head(sort(degree(g1,  mode = "all"), decreasing = TRUE), 5)
+deg1
+```
+
+Что же получается -> больше всх связей в первой кнгие имеет *Eddard-Stark*(батя семейства Старков), *Robert-Baratheon* и *Tyrion-Lannister*.
+
+### Betweenness (Битвинность)
+
+```{r}
+bet1 <- head(sort(betweenness(g1, directed = F), decreasing = TRUE), 5)
+bet1
+```
+
+Больше всего "мостов" между другими персонажами имеет *Robert-Baratheon* и *Eddard-Stark*(муж Серсей Ланистер, Ланистеры - это ещё одна семья), *Tyrion-Lannister*, *Robb-Stark*, *Catelyn-Stark*.
+ 
+### Closeness (Близость)
+
+```{r}
+clo1 <- head(sort(closeness(g1,mode = "all"), decreasing = TRUE), 5)
+clo1
+help(sort)
+```
+
+Ближе всех к другим персонажам в 1 книге у нас получается у *Robert-Baratheon*, *Tyrion-Lannister*,  *Jaime-Lannister*, *Loras-Tyrell*, *Eddard-Stark*. 
+
+### Книга 2
+
+### Уровень/мера центральности (Degree centrality)
+
+```{r}
+deg2 <- head(sort(degree(g2,  mode = "all"), decreasing = TRUE), 5)
+deg2
+```
+
+Больше всех связей во второй книге имеет *Tyrion-Lannister*, *Joffrey-Baratheon* и *Cersei-Lannister*.
+
+В целом логично, без спойлеров, но по сюжету очень сходится :3
+
+### Betweenness (Битвинность)
+
+```{r}
+bet2 <- head(sort(betweenness(g2, directed = F), decreasing = TRUE), 5)
+bet2
+```
+
+Больше всего "мостов" между другими персонажами имеет *Jaime-Lannister*, *Robert-Baratheon* и *Jon-Snow*.
+ 
+### Closeness (Близость)
+
+```{r}
+clo2 <- head(sort(closeness(g2,mode = "all"), decreasing = TRUE), 5)
+clo2
+```
+
+Ближе всех к другим персонажам в 1 книге у нас получается у *Robert-Baratheon*, *Jaime-Lannister*, *Arya-Stark*, *Catelyn-Stark*, *Joffrey-Baratheon*.
+
+### Книга 3
+
+### Уровень/мера центральности (Degree centrality)
+
+```{r}
+deg3 <- head(sort(degree(g3,  mode = "all"), decreasing = TRUE), 5)
+deg3
+```
+
+Больше всех связей во второй книге имеет *Tyrion-Lannister*, *Jon-Snow* и *offrey-Baratheon*.
+
+
+### Betweenness (Битвинность)
+
+```{r}
+bet3 <- head(sort(betweenness(g3, directed = F), decreasing = TRUE), 5)
+bet3
+```
+
+Больше всего "мостов" между другими персонажами имеет *Joffrey-Baratheon*, *Robert-Baratheon* и *Jon-Snowr*.
+ 
+### Closeness (Близость)
+
+```{r}
+clo3 <- head(sort(closeness(g3,mode = "all"), decreasing = TRUE), 5)
+clo3
+help(sort)
+```
+
+Ближе всех к другим персонажам в 1 книге у нас получается у *Joffrey-Baratheon* и *Robert-Baratheon*.
+
+### Книга 4
+
+### Уровень/мера центральности (Degree centrality)
+
+```{r}
+deg4 <- head(sort(degree(g4,  mode = "all"), decreasing = TRUE), 10)
+deg4
+```
+
+Больше всех связей во второй книге имеет *Jaime-Lannister*, *Cersei-Lannister* и *Brienne-of-Tarth*.
+
+
+### Betweenness (Битвинность)
+
+```{r}
+bet4 <- head(sort(betweenness(g4, directed = F), decreasing = TRUE), 5)
+bet4
+```
+
+Больше всего "мостов" между другими персонажами имеет *Stannis-Baratheon*, *Balon-Greyjoy* и *Jaime-Lannister*.
+
+
+### Книга 5
+
+### Уровень/мера центральности (Degree centrality)
+
+```{r}
+deg5 <- head(sort(degree(g5,  mode = "all"), decreasing = TRUE), 10)
+deg5
+```
+
+Больше всех связей во второй книге имеет *Jon-Snow*, *Daenerys-Targaryen* и *Stannis-Baratheon*.
+
+
+### Betweenness (Битвинность)
+
+```{r}
+bet5 <- head(sort(betweenness(g5, directed = F), decreasing = TRUE), 5)
+bet5
+```
+
+Больше всего "мостов" между другими персонажами имеет *Stannis-Baratheon*, *Daenerys-Targaryen* и *Jon-Snow*.
+
+
+### Closeness (Близость)
+
+```{r}
+clo5 <- head(sort(closeness(g5,mode = "all"), decreasing = TRUE), 5)
+clo5
+help(sort)
+```
+
+Ближе всех к другим персонажам в 1 книге у нас получается у *Stannis-Baratheon* и *Robert-Baratheon*.
+
+```{r}
+louvain_comm_m = cluster_louvain(g1)
+fg_comm_m = cluster_fast_greedy(g1)
+wt_comm_m = cluster_walktrap(g1)
+lp_comm_m = cluster_label_prop(g1)
+im_comm_m = cluster_infomap(g1)
+```
+
+
+#### Сравним модулярность, чтобы определить какой из методов нам больше всего подойдет.
+
+```{r}
+#присваиваем
+graphs <- list(g1 = g1, g2 = g2, g3 = g3, g4 = g4, g5 = g5)
+
+algo <- function(x){
+  set.seed(123)
+  louvain_comm <- cluster_louvain(x, weights = E(x)$weight) #присваиваем опять веса, потому что результаты отличные, если не использовать присваивание
+  fg_comm = cluster_fast_greedy(x, weights = E(x)$weight)
+  wt_comm = cluster_walktrap(x, weights = E(x)$weight)
+  lp_comm = cluster_label_prop(x, weights = E(x)$weight)
+  im_comm = cluster_infomap(x, e.weights = E(x)$weight)
+  
+  tibble(
+    Algorithm = c("Louvain", "Walktrap", "Fast Greedy", "Infomap", "Label Prop"),
+    Modularity = c(
+      modularity(louvain_comm),
+      modularity(fg_comm),
+      modularity(wt_comm),
+      modularity(im_comm),
+      modularity(lp_comm)
+    ),
+    Communities = c(
+      modularity(louvain_comm),
+      modularity(fg_comm),
+      modularity(wt_comm),
+      modularity(im_comm),
+      modularity(lp_comm)
+    )
+  ) |> arrange(-Modularity)
+}
+results <- map_dfr(graphs, ~ algo(.x), .id = "Book")
+knitr::kable(results, digits = 3, caption = "Средние показатели алгоритмов по 5 книгам")
+results
+```
+Таким образом мы выберем 2 алгоритма *Louvain* и *Walktrap* 
+
+```{r}
+plot(g1, 
+     vertex.label = NA,
+     edge.arrow.size = 0.3,
+     main = "Сообщества с размером узлов по степени")
+
+legend("topright", 
+       legend = paste("Сообщество", 1:length(louvain_comm_m)),
+       col = colors, pch = 11, pt.cex = 2)
+```
+
+
+
+Визуализируем
+```{r}
+plot(g1, layout=layout_with_fr,
+     vertex.label.cex = 0.7, 
+     vertex.size = 5,         
+     edge.width = 0.5)
+```
+
+```{r}
+plot(g3, layout=layout_with_fr,
+     vertex.label.cex = 0.7, 
+     vertex.size = 5,         
+     edge.width = 0.5)
+```
+```{r}
+plot(g3, layout=layout_with_fr,
+     vertex.label.cex = 0.7, 
+     vertex.size = 5,         
+     edge.width = 0.5)
+```
+
+
+
+
+
+
+
+
+
