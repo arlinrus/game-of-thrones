@@ -1,0 +1,76 @@
+/* ---------------------------------------
+   HBO PREMIUM STYLE for html_document
+   --------------------------------------- */
+
+/* Основной фон страницы */
+body {
+  background-color: #fdfbf7;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #2b2b2b;
+}
+
+/* Заголовки — дорогой минималистичный стиль */
+h1, h2, h3, h4 {
+  font-family: "Trajan Pro", "Times New Roman", serif;
+  letter-spacing: 0.5px;
+  color: #1a1a1a;
+}
+
+/* Подзаголовки */
+h1 {
+  font-size: 34px;
+  font-weight: 600;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 26px;
+  margin-top: 35px;
+}
+
+/* Содержание (TOC) — делаем стильней */
+#TOC {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+  border: 1px solid #e2d8c7;
+}
+
+/* Кнопка сворачивания ТОС */
+.tocify-toggle {
+  background-color: #1a1a1a !important;
+  color: #f7d488 !important; /* золото */
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-weight: 600;
+  border: none;
+}
+
+/* При наведении */
+.tocify-toggle:hover {
+  background-color: #000000 !important;
+}
+
+/* Ссылки */
+a {
+  color: #926f34;
+}
+a:hover {
+  color: #c59d4a;
+}
+
+/* Блоки кода */
+pre code {
+  background-color: #f8f5f0; /* светлый бежевый HBO-style */
+  color: #333;              /* нормальный тёмно-серый текст */
+  border-radius: 8px;
+  padding: 10px;
+}
+
+
+/* Картинки-карточки */
+figure img {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}

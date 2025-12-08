@@ -1,13 +1,18 @@
 ---
-title: "Проект по анализу сети - Игра престолов"
+title: "Проект по анализу сети — Игра престолов"
+author: "Астапенкова Арина, Горчинская Арина, Турутин Никита"
 output:
-  rmdformats::downcute:
-    fig_width: 10
-    fig_height: 10
-    df_print: kable
-    thumbnails: false
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+    toc_depth: 4
+    theme: sandstone
     highlight: kate
     code_folding: show
+    df_print: "kable"
+    css: "hbo.css"
 date: "`r Sys.Date()`"
 ---
 
@@ -15,23 +20,9 @@ date: "`r Sys.Date()`"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Описание данных
+### Библиотеки
 
-**«Игра престолов»** — телесериал канала HBO, основанный на серии книг Джорджа Мартина «Песнь Льда и Пламени». Мы проанализируем сеть совпадений персонажей книг «Игры престолов».
-
-![](https://m.media-amazon.com/images/M/MV5BMTNhMDJmNmYtNDQ5OS00ODdlLWE0ZDAtZTgyYTIwNDY3OTU3XkEyXkFqcGc@._V1_.jpg)
-
-Мы используем [набор данных](https://www.kaggle.com/datasets/mmmarchetti/game-of-thrones-dataset) с Kaggle. В узлах нашей сети — персонажи, в рёбрах — их совместные появления в главах по книгам 1-5. Таким образом, каждая книга формирует отдельный слой сети, что позволяет изучить её эволюцию во времени.
-
-### Исследовательский вопрос: 
-Как меняется структура сети персонажей по книгам — появляются ли новые кластеры, и как изменяются центральные узлы с течением времени?
-
-Для анализа мы планируем построить *графы*, вычислить метрики *центральности* (`degree`, `betweenness`, `closeness`), *проанализировать кластерную структуру* и *визуализировать изменения сети* во времени.
-
-
-### Выделим необходимые библиотеки
-
-```{r message = F}
+```{r message = FALSE}
 library(readr)
 library(visdat)
 library(igraph)
@@ -43,10 +34,28 @@ library(ggplot2)
 #update.packages(ask = FALSE, checkBuilt = TRUE)
 ```
 
+## Описание данных
 
-### Импортируем данные
+**«Игра престолов»** — телесериал канала HBO, основанный на серии книг Джорджа Мартина «Песнь Льда и Пламени». Мы проанализируем сеть совпадений персонажей книг «Игры престолов».
 
-```{r}
+<div style="display:flex; justify-content:center; margin:25px 0;">
+  <figure style="text-align:center;">
+    <img src="images/poster.jpeg"
+         style="width:300px; border-radius:12px;">
+  </figure>
+</div>
+
+Мы используем [набор данных](https://www.kaggle.com/datasets/mmmarchetti/game-of-thrones-dataset) с Kaggle. В узлах нашей сети — персонажи, в рёбрах — их совместные появления в главах по книгам 1-5. Таким образом, каждая книга формирует отдельный слой сети, что позволяет изучить её эволюцию во времени.
+
+### Исследовательский вопрос
+
+Как меняется структура сети персонажей по книгам — появляются ли новые кластеры, и как изменяются центральные узлы с течением времени?
+
+Для анализа мы планируем построить *графы*, вычислить метрики *центральности* (`degree`, `betweenness`, `closeness`), *проанализировать кластерную структуру* и *визуализировать изменения сети* во времени.
+
+### Импорт данных
+
+```{r message=FALSE}
 book1 <- read_csv("book1.csv")
 book2 <- read_csv("book2.csv")
 book3 <- read_csv("book3.csv")
@@ -59,15 +68,14 @@ head(book1)
 ### Структура данных
 
 | Переменная | Тип данных | Описание |
-|-------------------------|-------------------------|----------------------|
+|------------------------|------------------------|------------------------|
 | **Source** | `chr` | Имя персонажа, от которого идёт связь (узел-источник). |
 | **Target** | `chr` | Имя персонажа, к которому идёт связь (узел-получатель). |
 | **Type** | `chr` | Тип связи; в данных — всегда *Undirected* (неориентированная связь между персонажами). |
 | **weight** | `num` | Вес ребра — насколько часто персонажи взаимодействуют или появляются вместе. |
 | **book** | `num` | Номер книги (1–5), к которой относится данная пара персонажей. |
 
-
-### Посмотрим на пропуски и повторяющиеся значения в данных
+### Пропуски и дубликаты
 
 ```{r}
 colSums(is.na(book2))
@@ -77,10 +85,10 @@ colSums(is.na(book2))
 
 ```{r}
 book2[775, "book"] <- 2
-vis_miss(book2)
+# vis_miss(book2)
 ```
 
-### Теперь построим графы:
+## Графы
 
 Мы будем строить графы для каждой книги по отдельности, потому что хотим проанализировать как меняется структура сети персонажей с течением времени.
 
@@ -102,7 +110,6 @@ E(g4)$weight <- book4$weight
 E(g5)$weight <- book5$weight
 ```
 
-
 ### Описательная статистика
 
 ```{r}
@@ -116,154 +123,752 @@ ecount(g1)
 vcount(g1) * (vcount(g1) - 1) / 2
 ```
 
-
 ## Центральность
 
 ### Книга 1
 
-### Уровень/мера центральности (Degree centrality)
+#### Degree centrality (Степень центральности)
 
 ```{r}
 deg1 <- head(sort(degree(g1,  mode = "all"), decreasing = TRUE), 5)
 deg1
 ```
 
-Что же получается -> больше всх связей в первой кнгие имеет *Eddard-Stark*(батя семейства Старков), *Robert-Baratheon* и *Tyrion-Lannister*.
+Больше всех связей в книге имеют:
 
-### Betweenness (Битвинность)
+1. **Эддард Старк** — ключевой персонаж первой книги, глава клана Старков, лорд Винтерфелла, активно взаимодействующий и с королевской властью, и со своей семьёй.
+2. **Роберт Баратеон** — король Семи Королевств, вокруг него группируются множество персонажей: члены двора, советники, союзники и старые знакомые.
+3. **Тирион Ланнистер** — младший Ланнистер, человек с широким кругом контактов благодаря своему уму, остроумию и наблюдательности.
+4. **Кейтилин Старк** — мама семейства Старков, активно перемещается и участвует в расследованиях и дипломатических миссиях.
+5. **Джон Сноу** — бастард Эддарда Старка, обаяшка кучеряшка, новичок в Ночном Дозоре, взаимодействующий с членами братства и с персонажами из родного Винтерфелла.
+
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
+
+  <figure style="text-align:center;">
+    <img src="images/eddard.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Эддард Старк</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/robert.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Роберт Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/tyrion.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Тирион Ланнистер</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/catelyn.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Кейтилин Старк</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/jon.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Джон Сноу</figcaption>
+  </figure>
+
+</div>
+
+#### Betweenness (Битвинность)
 
 ```{r}
 bet1 <- head(sort(betweenness(g1, directed = F), decreasing = TRUE), 5)
 bet1
 ```
 
-Больше всего "мостов" между другими персонажами имеет *Robert-Baratheon* и *Eddard-Stark*(муж Серсей Ланистер, Ланистеры - это ещё одна семья), *Tyrion-Lannister*, *Robb-Stark*, *Catelyn-Stark*.
- 
-### Closeness (Близость)
+Больше всего "мостов" между другими персонажами имеют:
+
+1. **Роберт Баратеон** — соединяет множество различных групп: Старков, Ланнистеров, Малый Совет, воинов и придворных.
+2. **Эддард Старк** — становится связующим звеном между прошлым Роберта, дворцовыми интригами и северными линиями.
+3. **Тирион Ланнистер** — выполняет роль посредника между домами, поскольку часто оказывается в ситуациях, где два персонажа никак не связаны напрямую.
+4. **Робб Старк** — старший сын Старков, объединяет северные дома, вводя в сеть самостоятельную политическую линию.
+5. **Кейтилин Старк** — связывает политические силы северян и южан.
+
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
+
+  <figure style="text-align:center;">
+    <img src="images/eddard.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Роберт Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/robert.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Эддард Старк</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/tyrion.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Тирион Ланнистер</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/robb.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Робб Старк</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/catelyn.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Кейтилин Старк</figcaption>
+  </figure>
+
+</div>
+
+#### Closeness (Близость)
 
 ```{r}
 clo1 <- head(sort(closeness(g1,mode = "all"), decreasing = TRUE), 5)
 clo1
-help(sort)
 ```
 
-Ближе всех к другим персонажам в 1 книге у нас получается у *Robert-Baratheon*, *Tyrion-Lannister*,  *Jaime-Lannister*, *Loras-Tyrell*, *Eddard-Stark*. 
+Ближе всех к другим персонажам в книге:
+
+1. **Роберт Баратеон** — структурно «близок» ко многим узлам сети благодаря широкому набору связей.
+2. **Тирион Ланнистер** — слегка в стороне от основных интриг, но всегда вовлечён в разные линии, из-за чего многие персонажи находятся «на коротком расстоянии» от него.
+3. **Джейме Ланнистер** — брат Тириона, гад каких поискать, один из центральных членов своей династии, взаимодействующий и с королём, ~~и с королевой~~, и с влиятельными домами.
+4. **Лорас Тирелл** — представитель важного дома, один из самых искусных рыцарей Вестероса, часто фигурирующий рядом с ключевыми персонажами двора.
+5. **Эддард Старк** — его роль в столице в первой книге делает его одним из наиболее «близких» узлов в сети.
+
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
+
+  <figure style="text-align:center;">
+    <img src="images/eddard.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Роберт Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/robert.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Тирион Ланнистер</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/jaime.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Джейме Ланнистер</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/loras.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Лорас Тиррел</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/catelyn.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Эддард Старк</figcaption>
+  </figure>
+
+</div>
 
 ### Книга 2
 
-### Уровень/мера центральности (Degree centrality)
+#### Degree centrality (Степень центральности)
 
 ```{r}
 deg2 <- head(sort(degree(g2,  mode = "all"), decreasing = TRUE), 5)
 deg2
 ```
 
-Больше всех связей во второй книге имеет *Tyrion-Lannister*, *Joffrey-Baratheon* и *Cersei-Lannister*.
+Больше всех связей в книге имеют:
 
-В целом логично, без спойлеров, но по сюжету очень сходится :3
+1. **Тирион Ланнистер** — главный «менеджер хаоса» при дворе, постоянно взаимодействует и с семьёй, и с советом.
+2. **Джоффри Баратеон** — новый король (сын Серсеи Ланнистер и Роберта Баратеона...~~или нет~~), вокруг которого крутится придворная политика и конфликты.
+3. **Серсея Ланнистер** — сестра-близняшка Джейме Ланнистера, королева-регент, связана и с Ланнистерами, и с союзниками двора.
+4. **Арья Старк** — младшая дочь Эддарда Старка, активно перемещается между разными группами персонажей, попадает в разные среды.
+5. **Станнис Баратеон** — брат Роберта, претендент на трон, вокруг которого формируется отдельное политическое окружение.
 
-### Betweenness (Битвинность)
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
+
+  <figure style="text-align:center;">
+    <img src="images/tyrion.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Тирион Ланнистер</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/joffrey.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Джоффри Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/cersei.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Серсея Ланнистер</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/arya.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Арья Старк</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/stannis.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Станнис Баратеон</figcaption>
+  </figure>
+
+</div>
+
+#### Betweenness (Битвинность)
 
 ```{r}
 bet2 <- head(sort(betweenness(g2, directed = F), decreasing = TRUE), 5)
 bet2
 ```
 
-Больше всего "мостов" между другими персонажами имеет *Jaime-Lannister*, *Robert-Baratheon* и *Jon-Snow*.
- 
-### Closeness (Близость)
+Больше всего "мостов" между другими персонажами имеют:
+
+1. **Джейме Ланнистер** — опытный воин, связывающий линии войны, плена и придворных интриг.
+2. **Роберт Баратеон** — сохраняет влияние через наследие и связи других персонажей.
+3. **Джон Сноу** — соединяет северные и южные события.
+4. **Арья Старк** — перемещается между разными группами, становится посредником.
+5. **Робб Старк** — лидер северной коалиции, объединяющий несколько домов.
+
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
+
+  <figure style="text-align:center;">
+    <img src="images/jaime.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Джейме Ланнистер</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/robert.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Роберт Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/jon.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Джон Сноу</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/arya.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Арья Старк</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/robb.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Робб Старк</figcaption>
+  </figure>
+
+</div>
+
+#### Closeness (Близость)
 
 ```{r}
 clo2 <- head(sort(closeness(g2,mode = "all"), decreasing = TRUE), 5)
 clo2
 ```
 
-Ближе всех к другим персонажам в 1 книге у нас получается у *Robert-Baratheon*, *Jaime-Lannister*, *Arya-Stark*, *Catelyn-Stark*, *Joffrey-Baratheon*.
+Ближе всех к другим персонажам в книге:
+
+1. **Роберт Баратеон** — структурно важный узел, через который косвенно проходят многие пути.
+2. **Джейме Ланнистер** — остаётся близким ко многим узлам благодаря роли в войне.
+3. **Арья Старк** — перемещение делает её структурно «доступной» для разных групп.
+4. **Кейтилин Старк** — дипломатическая фигура, соединяющая северян и южан.
+5. **Джоффри Баратеон** — политический центр столицы.
+
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
+
+  <figure style="text-align:center;">
+    <img src="images/robert.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Роберт Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/jaime.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Джейме Ланнистер</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/arya.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Арья Старк</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/catelyn.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Кейтилин Старк</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/joffrey.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Джоффри Баратеон</figcaption>
+  </figure>
+
+</div>
 
 ### Книга 3
 
-### Уровень/мера центральности (Degree centrality)
+#### Degree centrality (Степень центральности)
 
 ```{r}
 deg3 <- head(sort(degree(g3,  mode = "all"), decreasing = TRUE), 5)
 deg3
 ```
 
-Больше всех связей во второй книге имеет *Tyrion-Lannister*, *Jon-Snow* и *offrey-Baratheon*.
+Больше всех связей в книге имеют:
 
+1. **Тирион Ланнистер** — ключевой придворный стратег, активно вовлечённый в политические события.
+2. **Джон Сноу** — брат Ночного Дозора, взаимодействующий с одичалыми и союзниками.
+3. **Джоффри Баратеон** — король, вокруг которого крутится придворная динамика.
+4. **Робб Старк** — король Севера, объединяющий северные дома.
+5. **Санса Старк** — придворная фигура, связанная с разными домами через интриги.
 
-### Betweenness (Битвинность)
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
+
+  <figure style="text-align:center;">
+    <img src="images/tyrion.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Тирион Ланнистер</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/jon.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Джон Сноу</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/joffrey.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Джоффри Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/robb.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Робб Старк</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/sansa.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Санса Старк</figcaption>
+  </figure>
+
+</div>
+
+#### Betweenness (Битвинность)
 
 ```{r}
 bet3 <- head(sort(betweenness(g3, directed = F), decreasing = TRUE), 5)
 bet3
 ```
 
-Больше всего "мостов" между другими персонажами имеет *Joffrey-Baratheon*, *Robert-Baratheon* и *Jon-Snowr*.
- 
-### Closeness (Близость)
+Больше всего "мостов" между другими персонажами имеют:
+
+1. **Джоффри Баратеон** — центр столичной политики, соединяющий множество фракций.
+2. **Роберт Баратеон** — остаётся структурно важным через связи и последствия его правления.
+3. **Джон Сноу** — соединяет линии Стены, одичалых и южные события.
+4. **Станнис Баратеон** — претендент на трон, объединяющий северные и южные ветки.
+5. **Кейтилин Старк** — дипломатический узел, соединяющий несколько домов.
+
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
+
+  <figure style="text-align:center;">
+    <img src="images/joffrey.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Джоффри Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/robert.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Роберт Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/jon.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Джон Сноу</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/stannis.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Станнис Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/catelyn.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Кейтилин Старк</figcaption>
+  </figure>
+
+</div>
+
+#### Closeness (Близость)
 
 ```{r}
 clo3 <- head(sort(closeness(g3,mode = "all"), decreasing = TRUE), 5)
 clo3
-help(sort)
 ```
 
-Ближе всех к другим персонажам в 1 книге у нас получается у *Joffrey-Baratheon* и *Robert-Baratheon*.
+Ближе всех к другим персонажам в книге:
+
+1. **Джоффри Баратеон** — важный узел придворной сети с минимальными расстояниями до других.
+2. **Роберт Баратеон** — сохраняет структурную значимость в сети.
+3. **Эддард Старк** — остаётся «близким» узлом благодаря связям других персонажей.
+4. **Станнис Баратеон** — становится ближе к политическому ядру.
+5. **Тирион Ланнистер** — один из наиболее доступных узлов столицы.
+
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
+
+  <figure style="text-align:center;">
+    <img src="images/joffrey.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Джоффри Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/robert.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Роберт Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/eddard.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Эддард Старк</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/stannis.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Станнис Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/tyrion.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Тирион Ланнистер</figcaption>
+  </figure>
+
+</div>
 
 ### Книга 4
 
-### Уровень/мера центральности (Degree centrality)
+#### Degree centrality (Степень центральности)
 
 ```{r}
-deg4 <- head(sort(degree(g4,  mode = "all"), decreasing = TRUE), 10)
+deg4 <- head(sort(degree(g4,  mode = "all"), decreasing = TRUE), 5)
 deg4
 ```
 
-Больше всех связей во второй книге имеет *Jaime-Lannister*, *Cersei-Lannister* и *Brienne-of-Tarth*.
+Больше всех связей в книге имеют:
 
+1. **Джейме Ланнистер** — активно перемещается и взаимодействует с разными домами.
+2. **Серсея Ланнистер** — королева-регент, управляющая придворными интригами.
+3. **Бриенна Тарт** — странствующая рыцарственная героиня, пересекающая множество линий.
+4. **Тирион Ланнистер** — формирует новые связи во время путешествий.
+5. **Маргери Тирелл** — представительница дома Тиреллов, важная придворная фигура.
 
-### Betweenness (Битвинность)
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
+
+  <figure style="text-align:center;">
+    <img src="images/jaime.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Джейме Ланнистер</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/cersei.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Серсея Ланнистер</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/brienne.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Бриенна Тарт</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/tyrion.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Тирион Ланнистер</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/margaery.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Маргери Тирелл</figcaption>
+  </figure>
+
+</div>
+
+#### Betweenness (Битвинность)
 
 ```{r}
 bet4 <- head(sort(betweenness(g4, directed = F), decreasing = TRUE), 5)
 bet4
 ```
 
-Больше всего "мостов" между другими персонажами имеет *Stannis-Baratheon*, *Balon-Greyjoy* и *Jaime-Lannister*.
+Больше всего "мостов" между другими персонажами имеют:
 
+1. **Станнис Баратеон** — стратегический узел, соединяющий политические линии Севера и Юга.
+2. **Бейлон Грейджой** — правитель Железных островов, узел морских сюжетов.
+3. **Джейме Ланнистер** — связывает разные фрагменты сети.
+4. **Бейлор Блэктайд** — посредник в морской линии Грейджоев (в сериале дом Блэктдайд почти не упоминался).
+5. **Серсея Ланнистер** — центр придворной политики.
+
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
+
+  <figure style="text-align:center;">
+    <img src="images/stannis.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Станнис Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/balon.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Бейлон Грейджой</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/jaime.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Джейме Ланнистер</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/baelor.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Бейлор Блэктайд</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/cersei.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Серсея Ланнистер</figcaption>
+  </figure>
+
+</div>
+
+#### Closeness (Близость)
+
+```{r}
+clo4 <- head(sort(closeness(g4,mode = "all"), decreasing = TRUE), 5)
+clo4
+```
+
+Ближе всех к другим персонажам в книге:
+
+1. **Тирион Ланнистер** — остаётся близким ко многим узлам благодаря путешествиям.
+2. **Станнис Баратеон** — один из центральных участников борьбы за власть.
+3. **Санса Старк** — соединяет линии Долины, Винтерфелла и придворных интриг.
+4. **Серсея Ланнистер** — важное политическое лицо столицы.
+5. **Тайвин Ланнистер** — сохраняет структурную значимость через свои связи.
+
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
+
+  <figure style="text-align:center;">
+    <img src="images/tyrion.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Тирион Ланнистер</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/stannis.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Станнис Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/sansa.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Санса Старк</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/cersei.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Серсея Ланнистер</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/tywin.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Тайвин Ланнистер</figcaption>
+  </figure>
+
+</div>
 
 ### Книга 5
 
-### Уровень/мера центральности (Degree centrality)
+#### Degree centrality (Степень центральности)
 
 ```{r}
-deg5 <- head(sort(degree(g5,  mode = "all"), decreasing = TRUE), 10)
+deg5 <- head(sort(degree(g5,  mode = "all"), decreasing = TRUE), 5)
 deg5
 ```
 
-Больше всех связей во второй книге имеет *Jon-Snow*, *Daenerys-Targaryen* и *Stannis-Baratheon*.
+Больше всех связей в книге имеют:
 
+1. **Джон Сноу** — лорд-командующий Ночного Дозора, объединяющий Стену, одичалых и северян.
+2. **Дейенерис Таргариен** — Мать драконов, центр политических союзов Эссоса.
+3. **Станнис Баратеон** — претендент на трон, ведущий кампанию на Севере.
+4. **Теон Грейджой** — фигура северной линии, связанная с домами Грейджоев и Старков.
+5. **Тирион Ланнистер** — путешествует по Эссосу, расширяя сеть контактов.
 
-### Betweenness (Битвинность)
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
+
+  <figure style="text-align:center;">
+    <img src="images/jon.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Джон Сноу</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/daenerys.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Дейенерис Таргариен</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/stannis.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Станнис Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/theon.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Теон Грейджой</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/tyrion.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Тирион Ланнистер</figcaption>
+  </figure>
+
+</div>
+
+#### Betweenness (Битвинность)
 
 ```{r}
 bet5 <- head(sort(betweenness(g5, directed = F), decreasing = TRUE), 5)
 bet5
 ```
 
-Больше всего "мостов" между другими персонажами имеет *Stannis-Baratheon*, *Daenerys-Targaryen* и *Jon-Snow*.
+Больше всего "мостов" между другими персонажами имеют:
 
+1. **Станнис Баратеон** — главный посредник книги, соединяющий северные, стенные и южные линии.
+2. **Дейенерис Таргариен** — объединяет множество групп Эссоса.
+3. **Джон Сноу** — связывает одичалых, Дозор и северные дома.
+4. **Роберт Баратеон** — сохраняет структурную важность через своё наследие.
+5. **Аша Грейджой** — ключевой посредник в линии Железных островов.
 
-### Closeness (Близость)
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
+
+  <figure style="text-align:center;">
+    <img src="images/stannis.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Станнис Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/daenerys.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Дейенерис Таргариен</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/jon.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Джон Сноу</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/robert.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Роберт Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/asha.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Аша Грейджой</figcaption>
+  </figure>
+
+</div>
+
+#### Closeness (Близость)
 
 ```{r}
 clo5 <- head(sort(closeness(g5,mode = "all"), decreasing = TRUE), 5)
 clo5
-help(sort)
 ```
 
-Ближе всех к другим персонажам в 1 книге у нас получается у *Stannis-Baratheon* и *Robert-Baratheon*.
+Ближе всех к другим персонажам в книге:
+
+1. **Станнис Баратеон** — один из наиболее «доступных» узлов сети пятой книги.
+2. **Роберт Баратеон** — его влияние остаётся структурно значимым.
+3. **Тайвин Ланнистер** — ключевая фигура, важная через связи других узлов.
+4. **Тирион Ланнистер** — остаётся структурно близким к разным группам.
+5. **Серсея Ланнистер** — политический центр столицы.
+
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
+
+  <figure style="text-align:center;">
+    <img src="images/stannis.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Станнис Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/robert.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Роберт Баратеон</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/tywin.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Тайвин Ланнистер</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/tyrion.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Тирион Ланнистер</figcaption>
+  </figure>
+
+  <figure style="text-align:center;">
+    <img src="images/cersei.jpeg"
+         style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">Серсея Ланнистер</figcaption>
+  </figure>
+
+</div>
 
 ```{r}
 louvain_comm_m = cluster_louvain(g1)
@@ -273,8 +878,9 @@ lp_comm_m = cluster_label_prop(g1)
 im_comm_m = cluster_infomap(g1)
 ```
 
+### Модулярность
 
-#### Сравним модулярность, чтобы определить какой из методов нам больше всего подойдет.
+Сравним модулярность, чтобы определить какой из методов нам больше всего подойдет.
 
 ```{r}
 #присваиваем
@@ -310,22 +916,25 @@ results <- map_dfr(graphs, ~ algo(.x), .id = "Book")
 knitr::kable(results, digits = 3, caption = "Средние показатели алгоритмов по 5 книгам")
 results
 ```
-Таким образом мы выберем 2 алгоритма *Louvain* и *Walktrap* 
+
+Таким образом мы выберем 2 алгоритма *Louvain* и *Walktrap*
 
 ```{r}
+n_comm <- length(unique(membership(louvain_comm_m)))
+colors_vec <- grDevices::rainbow(n_comm)
+
 plot(g1, 
      vertex.label = NA,
      edge.arrow.size = 0.3,
      main = "Сообщества с размером узлов по степени")
 
 legend("topright", 
-       legend = paste("Сообщество", 1:length(louvain_comm_m)),
-       col = colors, pch = 11, pt.cex = 2)
+       legend = paste("Сообщество", 1:n_comm),
+       col = colors_vec, pch = 11, pt.cex = 2)
 ```
 
-
-
 Визуализируем
+
 ```{r}
 plot(g1, layout=layout_with_fr,
      vertex.label.cex = 0.7, 
@@ -339,18 +948,10 @@ plot(g3, layout=layout_with_fr,
      vertex.size = 5,         
      edge.width = 0.5)
 ```
+
 ```{r}
 plot(g3, layout=layout_with_fr,
      vertex.label.cex = 0.7, 
      vertex.size = 5,         
      edge.width = 0.5)
 ```
-
-
-
-
-
-
-
-
-
