@@ -33,7 +33,6 @@ library(forcats)
 library(tidyr)
 library(knitr)
 library(ggplot2)
-#update.packages(ask = FALSE, checkBuilt = TRUE)
 library(visNetwork)
 library(RColorBrewer)
 ```
