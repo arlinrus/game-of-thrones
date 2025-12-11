@@ -136,7 +136,7 @@ summary_tbl <- purrr::imap_dfr(graphs, ~ tibble(
 kable(summary_tbl, digits = 3, caption = "Описательные характеристики сети по книгам")
 ```
 
-* **Узлы**: количествво растет от книги к книге (с 187 в первой книге до 317 в пятой) => отражает расширение мира: появляются новые линии, новые дома, новые второстепенные герои.
+* **Узлы**: количество растет от книги к книге (с 187 в первой книге до 317 в пятой) => отражает расширение мира: появляются новые линии, новые дома, новые второстепенные герои.
 
 * **Рёбра**: в целом количество увеличивается, но не так быстро, как число узлов — с 684 до 760 (при этом максимум 1008 рёбер в книге 3). То есть новых персонажей становится много, но каждый из них взаимодействует не со «всеми подряд», а с ограниченным кругом.
 
@@ -900,37 +900,51 @@ clo5
 Сравним **модулярность**, чтобы определить какой из методов нам больше всего подойдет.
 
 ```{r}
-#присваиваем
-graphs <- list(g1 = g1, g2 = g2, g3 = g3, g4 = g4, g5 = g5)
+# Список графов по книгам
+graphs <- list(
+  g1 = g1,
+  g2 = g2,
+  g3 = g3,
+  g4 = g4,
+  g5 = g5
+)
 
-algo <- function(x){
+# Функция для сравнения алгоритмов кластеризации по одному графу
+algo <- function(g) {
   set.seed(123)
-  louvain_comm <- cluster_louvain(x, weights = E(x)$weight)
-  fg_comm = cluster_fast_greedy(x, weights = E(x)$weight)
-  wt_comm = cluster_walktrap(x, weights = E(x)$weight)
-  lp_comm = cluster_label_prop(x, weights = E(x)$weight)
-  im_comm = cluster_infomap(x, e.weights = E(x)$weight)
+  louvain_comm <- cluster_louvain(g, weights = E(g)$weight)
+  fg_comm      <- cluster_fast_greedy(g, weights = E(g)$weight)
+  wt_comm      <- cluster_walktrap(g,  weights = E(g)$weight)
+  lp_comm      <- cluster_label_prop(g, weights = E(g)$weight)
+  im_comm      <- cluster_infomap(g,   e.weights = E(g)$weight)
   
   tibble(
-    Algorithm = c("Louvain", "Walktrap", "Fast Greedy", "Infomap", "Label Prop"),
+    Algorithm = c("Louvain", "Fast Greedy", "Walktrap", "Infomap", "Label Prop"),
     Modularity = c(
       modularity(louvain_comm),
-      modularity(fg_comm),
       modularity(wt_comm),
+      modularity(fg_comm),
       modularity(im_comm),
       modularity(lp_comm)
     ),
     Communities = c(
-      modularity(louvain_comm),
-      modularity(fg_comm),
-      modularity(wt_comm),
-      modularity(im_comm),
-      modularity(lp_comm)
+      length(unique(membership(louvain_comm))),
+      length(unique(membership(wt_comm))),
+      length(unique(membership(fg_comm))),
+      length(unique(membership(im_comm))),
+      length(unique(membership(lp_comm)))
     )
-  ) |> arrange(-Modularity)
+  ) |> arrange(desc(Modularity))
 }
-results <- map_dfr(graphs, ~ algo(.x), .id = "Book")
-knitr::kable(results, digits = 3, caption = "Средние показатели алгоритмов по 5 книгам")
+
+# Сводная таблица по всем книгам
+results <- purrr::map_dfr(graphs, ~ algo(.x), .id = "Book")
+
+knitr::kable(
+  results,
+  digits = 3,
+  caption = "Сравнение алгоритмов кластеризации по 5 книгам"
+)
 ```
 
 Сравнение алгоритмов показывает, что *Louvain* и *Walktrap* стабильно дают наибольшую модулярность по всем пяти книгам. Это означает, что они лучше остальных разделяют
@@ -1176,7 +1190,7 @@ par(mfrow = c(1, 1))
 
 ### Как меняются элиты и ключевые посредники по книгам?
 
-Во-первых, мир «Игры престолов» сильно фрагментирован. Уже в первой книге герои разбиты на группы, которые хорошо совпадаю с основным сюжетом: Север и дом Старков, королевский двор и Ланнистеры, восточная линия Дейенерис. Алгоритмы кластеризации (Louvain) автоматически выделяют эти группы, что показывает: общая структура истории четко видна во взаимодействии героев.
+Во-первых, мир «Игры престолов» сильно фрагментирован. Уже в первой книге герои разбиты на группы, которые хорошо совпадают с основным сюжетом: Север и дом Старков, королевский двор и Ланнистеры, восточная линия Дейенерис. Алгоритмы кластеризации (Louvain) автоматически выделяют эти группы, что показывает: общая структура истории четко видна во взаимодействии героев.
 
 Во-вторых, мы увидели, как меняется состав центральных узлов при переходе от книги к книге. Сначала это Эддард Старк и Роберт Баратеон, вокруг которых крутится основной сюжет. Постепенно их место занимают Тирион Ланнистер, Джон Сноу, Дейенерис Таргариен и Станнис Баратеон. Это не просто повороты сюжета (кто умер, кто пришел к власти), а перестройка всей системы власти.
 
