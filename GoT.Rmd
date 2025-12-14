@@ -41,13 +41,9 @@ library(RColorBrewer)
 
 **«Игра престолов»** — телесериал канала HBO, основанный на серии книг Джорджа Мартина «Песнь Льда и Пламени». Мы проанализируем сеть совпадений персонажей книг «Игры престолов».
 
-::: {style="display:flex; justify-content:center; margin:25px 0;"}
-<figure style="text-align:center;">
-
-<img src="images/poster.jpeg" style="width:300px; border-radius:12px;"/>
-
-</figure>
-:::
+<div style="display:flex; justify-content:center; margin:25px 0;">
+  <img src="images/poster.jpeg" style="width:300px; border-radius:12px;">
+</div>
 
 Мы используем [набор данных](https://www.kaggle.com/datasets/mmmarchetti/game-of-thrones-dataset) с Kaggle. В узлах нашей сети — персонажи, в рёбрах — их совместные появления в главах по книгам 1-5. Таким образом, каждая книга формирует отдельный слой сети, что позволяет изучить её эволюцию во времени.
 
@@ -161,6 +157,7 @@ kable(summary_tbl, digits = 3, caption = "Описательные характ�
 deg1 <- head(sort(degree(g1,  mode = "all"), decreasing = TRUE), 5)
 deg1
 ```
+
 Мы используем невзвешенный граф, потому что хотим понять сколько связей имеют персонажи.
 
 Больше всех связей в книге имеют:
@@ -171,67 +168,45 @@ deg1
 4.  **Кейтилин Старк** — мама семейства Старков, активно перемещается и участвует в расследованиях и дипломатических миссиях.
 5.  **Джон Сноу** — бастард Эддарда Старка, обаяшка кучеряшка, новичок в Ночном Дозоре, взаимодействующий с членами братства и с персонажами из родного Винтерфелла.
 
-::: {style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;"}
-<figure style="text-align:center;">
+<div style="display:flex; justify-content:center; gap:15px; margin:20px 0; flex-wrap:nowrap;">
 
-<img src="images/eddard.jpeg" style="width:130px; border-radius:12px;"/>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/eddard.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Эддард Старк
+    </figcaption>
+  </figure>
 
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
+  <figure style="text-align:center; margin:0;">
+    <img src="images/robert.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Роберт Баратеон
+    </figcaption>
+  </figure>
 
-Эддард Старк
+  <figure style="text-align:center; margin:0;">
+    <img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Тирион Ланнистер
+    </figcaption>
+  </figure>
 
-</figcaption>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/catelyn.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Кейтилин Старк
+    </figcaption>
+  </figure>
 
-</figure>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/jon.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Джон Сноу
+    </figcaption>
+  </figure>
 
-<figure style="text-align:center;">
+</div>
 
-<img src="images/robert.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Роберт Баратеон
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Тирион Ланнистер
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/catelyn.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Кейтилин Старк
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/jon.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Джон Сноу
-
-</figcaption>
-
-</figure>
-:::
 
 #### Betweenness (Битвинность)
 
@@ -248,73 +223,51 @@ bet1
 
 2.  **Кейтилин Старк** — имеет высокую битвинность благодаря своей способности связывать несколько изолированных подсетей.
 
-3.  **Джон Сноу** —  связан со Старками (через Эддарда и Робба) и одновременно с Севером, Ночным Дозором и даже дикими людьми (в зародыше).
+3.  **Джон Сноу** — связан со Старками (через Эддарда и Робба) и одновременно с Севером, Ночным Дозором и даже дикими людьми (в зародыше).
 
 4.  **Роберт Баратеон** — связан со всеми ведущими домами: со Старками (через дружбу с Эддардом), с Ланнистерами (через брак), с Дорном и Речными землями (как верховный правитель).
 
 5.  **Тирион Ланистер** — самый общительный среди семейства Ланнистеров.
 
-::: {style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;"}
-<figure style="text-align:center;">
+<div style="display:flex; justify-content:center; gap:15px; margin:20px 0; flex-wrap:nowrap;">
 
-<img src="images/eddard.jpeg" style="width:130px; border-radius:12px;"/>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/eddard.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Эддард Старк
+    </figcaption>
+  </figure>
 
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
+  <figure style="text-align:center; margin:0;">
+    <img src="images/catelyn.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Кейтилин Старк
+    </figcaption>
+  </figure>
 
-Роберт Баратеон
+  <figure style="text-align:center; margin:0;">
+    <img src="images/jon.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Джон Сноу
+    </figcaption>
+  </figure>
 
-</figcaption>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/robert.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Роберт Баратеон
+    </figcaption>
+  </figure>
 
-</figure>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Тирион Ланнистер
+    </figcaption>
+  </figure>
 
-<figure style="text-align:center;">
+</div>
 
-<img src="images/robert.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Эддард Старк
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Тирион Ланнистер
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/robb.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Робб Старк
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/catelyn.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Кейтилин Старк
-
-</figcaption>
-
-</figure>
-:::
 
 #### Closeness (Близость)
 
@@ -331,67 +284,44 @@ clo1
 4.  **Лорас Тирелл** — представитель важного дома, один из самых искусных рыцарей Вестероса, часто фигурирующий рядом с ключевыми персонажами двора.
 5.  **Эддард Старк** — его роль в столице в первой книге делает его одним из наиболее «близких» узлов в сети.
 
-::: {style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;"}
-<figure style="text-align:center;">
+<div style="display:flex; justify-content:center; gap:15px; margin:20px 0; flex-wrap:nowrap;">
 
-<img src="images/eddard.jpeg" style="width:130px; border-radius:12px;"/>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/robert.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Роберт Баратеон
+    </figcaption>
+  </figure>
 
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
+  <figure style="text-align:center; margin:0;">
+    <img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Тирион Ланнистер
+    </figcaption>
+  </figure>
 
-Роберт Баратеон
+  <figure style="text-align:center; margin:0;">
+    <img src="images/jaime.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Джейме Ланнистер
+    </figcaption>
+  </figure>
 
-</figcaption>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/loras.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Лорас Тиррел
+    </figcaption>
+  </figure>
 
-</figure>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/eddard.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Эддард Старк
+    </figcaption>
+  </figure>
 
-<figure style="text-align:center;">
-
-<img src="images/robert.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Тирион Ланнистер
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/jaime.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Джейме Ланнистер
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/loras.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Лорас Тиррел
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/catelyn.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Эддард Старк
-
-</figcaption>
-
-</figure>
-:::
+</div>
 
 ### Книга 2
 
@@ -410,67 +340,45 @@ deg2
 4.  **Арья Старк** — младшая дочь Эддарда Старка, активно перемещается между разными группами персонажей, попадает в разные среды.
 5.  **Станнис Баратеон** — брат Роберта, претендент на трон, вокруг которого формируется отдельное политическое окружение.
 
-::: {style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;"}
-<figure style="text-align:center;">
+<div style="display:flex; justify-content:center; gap:15px; margin:20px 0; flex-wrap:nowrap;">
 
-<img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;"/>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Тирион Ланнистер
+    </figcaption>
+  </figure>
 
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
+  <figure style="text-align:center; margin:0;">
+    <img src="images/joffrey.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Джоффри Баратеон
+    </figcaption>
+  </figure>
 
-Тирион Ланнистер
+  <figure style="text-align:center; margin:0;">
+    <img src="images/cersei.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Серсея Ланнистер
+    </figcaption>
+  </figure>
 
-</figcaption>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/arya.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Арья Старк
+    </figcaption>
+  </figure>
 
-</figure>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/stannis.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Станнис Баратеон
+    </figcaption>
+  </figure>
 
-<figure style="text-align:center;">
+</div>
 
-<img src="images/joffrey.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Джоффри Баратеон
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/cersei.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Серсея Ланнистер
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/arya.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Арья Старк
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/stannis.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Станнис Баратеон
-
-</figcaption>
-
-</figure>
-:::
 
 #### Betweenness (Битвинность)
 
@@ -487,67 +395,45 @@ bet2
 4.  **Арья Старк** — мост между элитой и низами, Севером и чужими землями. Её путь связывает разные миры.
 5.  **Ренли Баратеон** — объединяет юг и двор. Его союзы создают новые информационные каналы между домами.
 
-::: {style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;"}
-<figure style="text-align:center;">
+<div style="display:flex; justify-content:center; gap:15px; margin:20px 0; flex-wrap:nowrap;">
 
-<img src="images/jaime.jpeg" style="width:130px; border-radius:12px;"/>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/robb.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Робб Старк
+    </figcaption>
+  </figure>
 
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
+  <figure style="text-align:center; margin:0;">
+    <img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Тирион Ланнистер
+    </figcaption>
+  </figure>
 
-Джейме Ланнистер
+  <figure style="text-align:center; margin:0;">
+    <img src="images/joffrey.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Джоффри Баратеон
+    </figcaption>
+  </figure>
 
-</figcaption>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/arya.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Арья Старк
+    </figcaption>
+  </figure>
 
-</figure>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/renly.jpg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Ренли Баратеон
+    </figcaption>
+  </figure>
 
-<figure style="text-align:center;">
+</div>
 
-<img src="images/robert.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Роберт Баратеон
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/jon.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Джон Сноу
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/arya.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Арья Старк
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/robb.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Робб Старк
-
-</figcaption>
-
-</figure>
-:::
 
 #### Closeness (Близость)
 
@@ -564,67 +450,44 @@ clo2
 4.  **Кейтилин Старк** — дипломатическая фигура, соединяющая северян и южан.
 5.  **Джоффри Баратеон** — политический центр столицы.
 
-::: {style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;"}
-<figure style="text-align:center;">
+<div style="display:flex; justify-content:center; gap:15px; margin:20px 0; flex-wrap:nowrap;">
 
-<img src="images/robert.jpeg" style="width:130px; border-radius:12px;"/>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/robert.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Роберт Баратеон
+    </figcaption>
+  </figure>
 
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
+  <figure style="text-align:center; margin:0;">
+    <img src="images/jaime.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Джейме Ланнистер
+    </figcaption>
+  </figure>
 
-Роберт Баратеон
+  <figure style="text-align:center; margin:0;">
+    <img src="images/arya.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Арья Старк
+    </figcaption>
+  </figure>
 
-</figcaption>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/catelyn.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Кейтилин Старк
+    </figcaption>
+  </figure>
 
-</figure>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/joffrey.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Джоффри Баратеон
+    </figcaption>
+  </figure>
 
-<figure style="text-align:center;">
-
-<img src="images/jaime.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Джейме Ланнистер
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/arya.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Арья Старк
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/catelyn.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Кейтилин Старк
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/joffrey.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Джоффри Баратеон
-
-</figcaption>
-
-</figure>
-:::
+</div>
 
 ### Книга 3
 
@@ -643,67 +506,45 @@ deg3
 4.  **Робб Старк** — король Севера, объединяющий северные дома.
 5.  **Санса Старк** — придворная фигура, связанная с разными домами через интриги.
 
-::: {style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;"}
-<figure style="text-align:center;">
+<div style="display:flex; justify-content:center; gap:15px; margin:20px 0; flex-wrap:nowrap;">
 
-<img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;"/>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Тирион Ланнистер
+    </figcaption>
+  </figure>
 
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
+  <figure style="text-align:center; margin:0;">
+    <img src="images/jon.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Джон Сноу
+    </figcaption>
+  </figure>
 
-Тирион Ланнистер
+  <figure style="text-align:center; margin:0;">
+    <img src="images/joffrey.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Джоффри Баратеон
+    </figcaption>
+  </figure>
 
-</figcaption>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/robb.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Робб Старк
+    </figcaption>
+  </figure>
 
-</figure>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/sansa.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Санса Старк
+    </figcaption>
+  </figure>
 
-<figure style="text-align:center;">
+</div>
 
-<img src="images/jon.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Джон Сноу
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/joffrey.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Джоффри Баратеон
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/robb.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Робб Старк
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/sansa.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Санса Старк
-
-</figcaption>
-
-</figure>
-:::
 
 #### Betweenness (Битвинность)
 
@@ -717,70 +558,47 @@ bet3
 1.  **Робб Старк** — центр столичной политики, соединяющий множество фракций.
 2.  **Тирион Ланистер** — остаётся структурно важным через связи и последствия его правления.
 3.  **Джон Сноу** — соединяет линии Стены, одичалых и южные события.
-4.  **Джейми Ланнистер** — претендент на трон, объединяющий северные и южные ветки.
-5.  **Станис Баратеон** — дипломатический узел, соединяющий несколько домов.
+4.  **Джейме Ланнистер** — претендент на трон, объединяющий северные и южные ветки.
+5.  **Станнис Баратеон** — дипломатический узел, соединяющий несколько домов.
 
-::: {style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;"}
-<figure style="text-align:center;">
+<div style="display:flex; justify-content:center; gap:15px; margin:20px 0; flex-wrap:nowrap;">
 
-<img src="images/joffrey.jpeg" style="width:130px; border-radius:12px;"/>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/robb.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Робб Старк
+    </figcaption>
+  </figure>
 
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
+  <figure style="text-align:center; margin:0;">
+    <img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Тирион Ланнистер
+    </figcaption>
+  </figure>
 
-Джоффри Баратеон
+  <figure style="text-align:center; margin:0;">
+    <img src="images/jon.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Джон Сноу
+    </figcaption>
+  </figure>
 
-</figcaption>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/jaime.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Джейме Ланнистер
+    </figcaption>
+  </figure>
 
-</figure>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/stannis.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Станнис Баратеон
+    </figcaption>
+  </figure>
 
-<figure style="text-align:center;">
-
-<img src="images/robert.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Роберт Баратеон
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/jon.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Джон Сноу
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/stannis.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Станнис Баратеон
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/catelyn.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Кейтилин Старк
-
-</figcaption>
-
-</figure>
-:::
+</div>
 
 #### Closeness (Близость)
 
@@ -797,67 +615,45 @@ clo3
 4.  **Станнис Баратеон** — становится ближе к политическому ядру.
 5.  **Тирион Ланнистер** — один из наиболее доступных узлов столицы.
 
-::: {style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;"}
-<figure style="text-align:center;">
+<div style="display:flex; justify-content:center; gap:15px; margin:20px 0; flex-wrap:nowrap;">
 
-<img src="images/joffrey.jpeg" style="width:130px; border-radius:12px;"/>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/joffrey.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Джоффри Баратеон
+    </figcaption>
+  </figure>
 
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
+  <figure style="text-align:center; margin:0;">
+    <img src="images/robert.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Роберт Баратеон
+    </figcaption>
+  </figure>
 
-Джоффри Баратеон
+  <figure style="text-align:center; margin:0;">
+    <img src="images/eddard.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Эддард Старк
+    </figcaption>
+  </figure>
 
-</figcaption>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/stannis.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Станнис Баратеон
+    </figcaption>
+  </figure>
 
-</figure>
+  <figure style="text-align:center; margin:0;">
+    <img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Тирион Ланнистер
+    </figcaption>
+  </figure>
 
-<figure style="text-align:center;">
+</div>
 
-<img src="images/robert.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Роберт Баратеон
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/eddard.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Эддард Старк
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/stannis.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Станнис Баратеон
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Тирион Ланнистер
-
-</figcaption>
-
-</figure>
-:::
 
 ### Книга 4
 
@@ -870,73 +666,51 @@ deg4
 
 Больше всех связей в книге имеют:
 
-1.  **Джейме Ланнистер** — активно перемещается и взаимодействует с разными домами.
+1.  **Джейми Ланнистер** — активно перемещается и взаимодействует с разными домами.
 2.  **Серсея Ланнистер** — королева-регент, управляющая придворными интригами.
 3.  **Бриенна Тарт** — странствующая рыцарственная героиня, пересекающая множество линий.
 4.  **Тирион Ланнистер** — формирует новые связи во время путешествий.
 5.  **Маргери Тирелл** — представительница дома Тиреллов, важная придворная фигура.
 
-::: {style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;"}
-<figure style="text-align:center;">
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
 
-<img src="images/jaime.jpeg" style="width:130px; border-radius:12px;"/>
+  <figure style="text-align:center;">
+    <img src="images/jaime.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Джейме Ланнистер
+    </figcaption>
+  </figure>
 
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
+  <figure style="text-align:center;">
+    <img src="images/cersei.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Серсея Ланнистер
+    </figcaption>
+  </figure>
 
-Джейме Ланнистер
+  <figure style="text-align:center;">
+    <img src="images/brienne.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Бриенна Тарт
+    </figcaption>
+  </figure>
 
-</figcaption>
+  <figure style="text-align:center;">
+    <img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Тирион Ланнистер
+    </figcaption>
+  </figure>
 
-</figure>
+  <figure style="text-align:center;">
+    <img src="images/margaery.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Маргери Тирелл
+    </figcaption>
+  </figure>
 
-<figure style="text-align:center;">
+</div>
 
-<img src="images/cersei.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Серсея Ланнистер
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/brienne.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Бриенна Тарт
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Тирион Ланнистер
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/margaery.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Маргери Тирелл
-
-</figcaption>
-
-</figure>
-:::
 
 #### Betweenness (Битвинность)
 
@@ -947,73 +721,51 @@ bet4
 
 Наиболее часто находятся на кратчайших путях между другими героями, что делает их ключевыми посредниками в сети взаимодействий:
 
-1.  **Церсея Ланнистер** — центр всех дворцовых интриг, через неё проходят связи между королевской семьёй, церковью и армией
+1.  **Серсея Ланнистер** — центр всех дворцовых интриг, через неё проходят связи между королевской семьёй, церковью и армией
 2.  **Джейме Ланнистер** — перемещается между военными лагерями, семьёй и политическими противниками — становится мостом между силовыми блоками.
-3.  **Станнис Барате** — единственный претендент на трон, чьи действия связывают Север, Драконий Камень и южные дома — ключевой узел в борьбе за власть.
-4.  **Самвел Тарли** — мост между учёным миром (Мейстеры), Стражей Ночи и внешними угрозами его знания и путь делают его неожиданным посредником.
-5.  **Бринея Тарт** — связывает Север, королевский двор и рыцарские кодексы её лояльность и перемещения создают редкие, но важные пути между группами.
+3.  **Станнис Баратеон** — единственный претендент на трон, чьи действия связывают Север, Драконий Камень и южные дома — ключевой узел в борьбе за власть.
+4.  **Сэмвел Тарли** — мост между учёным миром (Мейстеры), Стражей Ночи и внешними угрозами его знания и путь делают его неожиданным посредником.
+5.  **Бриенна Тарт** — связывает Север, королевский двор и рыцарские кодексы её лояльность и перемещения создают редкие, но важные пути между группами.
 
-::: {style="display:flонex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;"}
-<figure style="text-align:center;">
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
 
-<img src="images/stannis.jpeg" style="width:130px; border-radius:12px;"/>
+  <figure style="text-align:center;">
+    <img src="images/cersei.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Серсея Ланнистер
+    </figcaption>
+  </figure>
 
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
+  <figure style="text-align:center;">
+    <img src="images/jaime.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Джейме Ланнистер
+    </figcaption>
+  </figure>
 
-Станнис Баратеон
+  <figure style="text-align:center;">
+    <img src="images/stannis.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Станнис Баратеон
+    </figcaption>
+  </figure>
 
-</figcaption>
+  <figure style="text-align:center;">
+    <img src="images/samwell.jpg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Сэмвел Тарли
+    </figcaption>
+  </figure>
 
-</figure>
+  <figure style="text-align:center;">
+    <img src="images/brienne.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Бриенна Тарт
+    </figcaption>
+  </figure>
 
-<figure style="text-align:center;">
+</div>
 
-<img src="images/balon.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Бейлон Грейджой
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/jaime.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Джейме Ланнистер
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/baelor.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Бейлор Блэктайд
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/cersei.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Серсея Ланнистер
-
-</figcaption>
-
-</figure>
-:::
 
 #### Closeness (Близость)
 
@@ -1030,67 +782,45 @@ clo4
 4.  **Серсея Ланнистер** — важное политическое лицо столицы.
 5.  **Тайвин Ланнистер** — сохраняет структурную значимость через свои связи.
 
-::: {style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;"}
-<figure style="text-align:center;">
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
 
-<img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;"/>
+  <figure style="text-align:center;">
+    <img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Тирион Ланнистер
+    </figcaption>
+  </figure>
 
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
+  <figure style="text-align:center;">
+    <img src="images/stannis.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Станнис Баратеон
+    </figcaption>
+  </figure>
 
-Тирион Ланнистер
+  <figure style="text-align:center;">
+    <img src="images/sansa.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Санса Старк
+    </figcaption>
+  </figure>
 
-</figcaption>
+  <figure style="text-align:center;">
+    <img src="images/cersei.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Серсея Ланнистер
+    </figcaption>
+  </figure>
 
-</figure>
+  <figure style="text-align:center;">
+    <img src="images/tywin.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Тайвин Ланнистер
+    </figcaption>
+  </figure>
 
-<figure style="text-align:center;">
+</div>
 
-<img src="images/stannis.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Станнис Баратеон
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/sansa.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Санса Старк
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/cersei.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Серсея Ланнистер
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/tywin.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Тайвин Ланнистер
-
-</figcaption>
-
-</figure>
-:::
 
 ### Книга 5
 
@@ -1109,144 +839,99 @@ deg5
 4.  **Теон Грейджой** — фигура северной линии, связанная с домами Грейджоев и Старков.
 5.  **Тирион Ланнистер** — путешествует по Эссосу, расширяя сеть контактов.
 
-::: {style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;"}
-<figure style="text-align:center;">
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
 
-<img src="images/jon.jpeg" style="width:130px; border-radius:12px;"/>
+  <figure style="text-align:center;">
+    <img src="images/jon.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Джон Сноу
+    </figcaption>
+  </figure>
 
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
+  <figure style="text-align:center;">
+    <img src="images/daenerys.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Дейенерис Таргариен
+    </figcaption>
+  </figure>
 
-Джон Сноу
+  <figure style="text-align:center;">
+    <img src="images/stannis.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Станнис Баратеон
+    </figcaption>
+  </figure>
 
-</figcaption>
+  <figure style="text-align:center;">
+    <img src="images/theon.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Теон Грейджой
+    </figcaption>
+  </figure>
 
-</figure>
+  <figure style="text-align:center;">
+    <img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Тирион Ланнистер
+    </figcaption>
+  </figure>
 
-<figure style="text-align:center;">
-
-<img src="images/daenerys.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Дейенерис Таргариен
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/stannis.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Станнис Баратеон
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/theon.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Теон Грейджой
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Тирион Ланнистер
-
-</figcaption>
-
-</figure>
-:::
+</div>
 
 #### Betweenness (Битвинность)
 
 ```{r}
-bet5 <- head(sort(betweenness(g5, directed = F, weights = 1/E(g5)$wieght), decreasing = TRUE), 5)
+bet5 <- head(sort(betweenness(g5, directed = F, weights = 1/E(g5)$weight), decreasing = TRUE), 5)
 bet5
 ```
 
 Наиболее часто находятся на кратчайших путях между другими героями, что делает их ключевыми посредниками в сети взаимодействий:
 
 1.  **Станнис Баратеон** — остаётся ключевым узлом: его кампания объединяет Север, рыцарей и верующих — все пути ведут к нему или через него.
-2.  **Дейенерис Таргариен** — центр новой империи, её решения связывают драконов, жителей Мира, наёмников и вассалов — она становится глобальным посредником.
+2.  **Тирион Ланнистер** — продолжает быть посредником, но уже на другом уровне между Дейнерис, драконами и старым миром. Его ум — главный канал обмена.
 3.  **Джон Сноу** — на границе мира живых и мёртвых, его положение на Стене и связь с Севером делают его мостом между двумя мирами.
-4.  **Тирион Ланнистер** — продолжает быть посредником, но уже на другом уровне между Дейнерис, драконами и старым миром. Его ум — главный канал обмена.
-5.  **Роберт Баратеон** — хотя он мёртв, его имя и наследие продолжают влиять его фигура остаётся символическим узлом, вокруг которого строятся новые союзы.
+4.  **Роберт Баратеон** — хотя он мёртв, его имя и наследие продолжают влиять его фигура остаётся символическим узлом, вокруг которого строятся новые союзы.
+5.  **Дейенерис Таргариен** — центр новой империи, её решения связывают драконов, жителей Мира, наёмников и вассалов — она становится глобальным посредником.
 
-::: {style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;"}
-<figure style="text-align:center;">
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
 
-<img src="images/stannis.jpeg" style="width:130px; border-radius:12px;"/>
+  <figure style="text-align:center;">
+    <img src="images/stannis.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Станнис Баратеон
+    </figcaption>
+  </figure>
 
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
+  <figure style="text-align:center;">
+    <img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Тирион Ланнистер
+    </figcaption>
+  </figure>
 
-Станнис Баратеон
+  <figure style="text-align:center;">
+    <img src="images/jon.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Джон Сноу
+    </figcaption>
+  </figure>
 
-</figcaption>
+  <figure style="text-align:center;">
+    <img src="images/robert.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Роберт Баратеон
+    </figcaption>
+  </figure>
 
-</figure>
+  <figure style="text-align:center;">
+    <img src="images/daenerys.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Дейенерис Таргариен
+    </figcaption>
+  </figure>
 
-<figure style="text-align:center;">
+</div>
 
-<img src="images/daenerys.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Дейенерис Таргариен
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/jon.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Джон Сноу
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/robert.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Роберт Баратеон
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/asha.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Аша Грейджой
-
-</figcaption>
-
-</figure>
-:::
 
 #### Closeness (Близость)
 
@@ -1263,67 +948,45 @@ clo5
 4.  **Тирион Ланнистер** — остаётся структурно близким к разным группам.
 5.  **Серсея Ланнистер** — политический центр столицы.
 
-::: {style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;"}
-<figure style="text-align:center;">
+<div style="display:flex; justify-content:center; gap:15px; margin-top:20px; flex-wrap:nowrap;">
 
-<img src="images/stannis.jpeg" style="width:130px; border-radius:12px;"/>
+  <figure style="text-align:center;">
+    <img src="images/stannis.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Станнис Баратеон
+    </figcaption>
+  </figure>
 
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
+  <figure style="text-align:center;">
+    <img src="images/robert.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Роберт Баратеон
+    </figcaption>
+  </figure>
 
-Станнис Баратеон
+  <figure style="text-align:center;">
+    <img src="images/tywin.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Тайвин Ланнистер
+    </figcaption>
+  </figure>
 
-</figcaption>
+  <figure style="text-align:center;">
+    <img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Тирион Ланнистер
+    </figcaption>
+  </figure>
 
-</figure>
+  <figure style="text-align:center;">
+    <img src="images/cersei.jpeg" style="width:130px; border-radius:12px;">
+    <figcaption style="margin-top:6px; font-size:14px; color:#555;">
+      Серсея Ланнистер
+    </figcaption>
+  </figure>
 
-<figure style="text-align:center;">
+</div>
 
-<img src="images/robert.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Роберт Баратеон
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/tywin.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Тайвин Ланнистер
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/tyrion.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Тирион Ланнистер
-
-</figcaption>
-
-</figure>
-
-<figure style="text-align:center;">
-
-<img src="images/cersei.jpeg" style="width:130px; border-radius:12px;"/>
-
-<figcaption style="margin-top:6px; font-size:14px; color:#555;">
-
-Серсея Ланнистер
-
-</figcaption>
-
-</figure>
-:::
 
 ## Эволюция влияния
 
@@ -1352,16 +1015,28 @@ ggplot(df, aes(x = Книга, y = Битвинность)) +
   theme_minimal()
 ```
 
+<figure style="text-align:center;">
+
+![](images/big_tyrion.jpg){style="border-radius:12px;" width="300"}
+
+<figcaption style="margin-top:6px; font-size:20px; color:#555;">
+
+Тирион Ланнистер
+
+</figcaption>
+
+</figure>
+
 **Книги 1–3**: Тирион активно участвует в политических интригах Королевской Гавани, выступая мостом между двором, армией и Севером.
 
 **Книга 4**: Резкое падение связано с его бегством из Вестероса. Он временно исчезает из основной сети, теряя связи с ключевыми фигурами.
 
 **Книга 5**: Резкий скачок отражает его новую роль в мире, он становится посредником между Дейнерис Таргариен, драконами и старым миром, что делает его ещё более важным узлом, чем раньше.
 
-
 ### Какой дом чаще всего взаимодействует с другими?
 
-##### Книга 1
+#### Книга 1
+
 ```{r}
 V(g1)$base_house <- sapply(strsplit(V(g1)$name, "-"), function(x) {
   if (length(x) >= 2) x[2] else x[1]
@@ -1447,7 +1122,7 @@ house_summary <- house_summary |>
 
 # График
 ggplot(house_summary, aes(x = reorder(house, total_strength), y = total_strength)) +
-  geom_col(fill = "purple", color = "darkblue", size = 1.5) +
+  geom_col(fill = "#f7d488", color = "#2b2b2b", size = 1.5) +
   coord_flip() +
   labs(
     title = "Активность главных домов в Книге 1",
@@ -1458,9 +1133,19 @@ ggplot(house_summary, aes(x = reorder(house, total_strength), y = total_strength
   theme_minimal()
 ```
 
+Обратим внимание, что other - это персонажи, которые не относятся ни к одному из домов, поэтому его мы не считаем. Самый активный дом в 1 книге, конечно, **Старки**, так как там появляется Робб Старк и идет упор на раскрытие сюжета дома старков.
 
-Обратим внимание, что other - это персонажи, которые не относятся ни к одному из домов, поэтому его мы не считаем.
-Самый активнй в 1 книге, конечно старки, так как там появляется Роб Старк и идет упор на раскрытие сюжета дома старков.
+<figure style="text-align:center;">
+
+![](images/stark.jpg){style="border-radius:12px;"}
+
+<figcaption style="margin-top:6px; font-size:20px; color:#555;">
+
+Старки
+
+</figcaption>
+
+</figure>
 
 #### Книга 5
 
@@ -1548,7 +1233,7 @@ house_summary <- house_summary |>
   mutate(house = factor(house, levels = c(target_houses, "Other")))
 
 ggplot(house_summary, aes(x = reorder(house, total_strength), y = total_strength)) +
-  geom_col(fill = "lightblue", color = "darkblue", size = 1.5) +
+  geom_col(fill = "#93b2bd", color = "#2b2b2b", size = 1.5) +
   coord_flip() +
   labs(
     title = "Активность главных домов в Книге 5",
@@ -1559,7 +1244,21 @@ ggplot(house_summary, aes(x = reorder(house, total_strength), y = total_strength
   theme_minimal()
 ```
 
-Также не учитываем other, теперь на первый план в 5 книге у нас вышли Таргариены. Интересно, что из семейства таргариенов в основном участвует Дайнерис, как один персонад, отец - Эйрис II Таргариен несколько раз упоминается в качестве родного отца Джона Сноу. Тут конечно много спойлеров, так что извиняемся.
+*Спойлеры!!!*
+
+На первый план в 5 книге вышли **Таргариены**. Интересно, что из семейства таргариенов в основном участвует Дейенерис. Отец - Эйрис II Таргариен несколько раз упоминается в качестве родного отца Джона Сноу.
+
+<figure style="text-align:center;">
+
+![](images/targarien.jpg){style="border-radius:12px;"}
+
+<figcaption style="margin-top:6px; font-size:20px; color:#555;">
+
+Таргариены
+
+</figcaption>
+
+</figure>
 
 ## Кластеризация сети
 
@@ -1880,7 +1579,6 @@ par(mfrow = c(1, 1))
 
 Таким образом, все участники принимали участие и в технической, и в содержательной частях проекта.
 
-::: {style="display:flex; justify-content:center; margin:25px 0;"}
 <figure style="text-align:center;">
 
 <img src="images/Jon Snow.jpg" style="width:300px; border-radius:12px;"/>
@@ -1892,4 +1590,3 @@ par(mfrow = c(1, 1))
 </figcaption>
 
 </figure>
-:::
